@@ -8,7 +8,16 @@ castor::relation gender( castor::lref < std::string > p, castor::lref<std::strin
 		|| eq( p, "Sam" ) && eq( g, "male" )
 		;
 }
+//////////////////////////////////////////////////////////////////////////////////////////
+//[GLOBAL RULES]
+castor::relation exceededMaxTurns( int curNumTurns )
+{
+	using namespace castor;
+	return Boolean( curNumTurns > 100 )
+		;
+}
 
+//////////////////////////////////////////////////////////////////////////////////////////
 //stats: HP, Attack, and Movement
 struct charInfo
 {
@@ -17,18 +26,22 @@ struct charInfo
 	int _hp;
 	int _attack;
 	int _movement;
+	std::vector<int> _pos;
 };
 using CharInfoMap = std::map<std::string/*name*/, charInfo>;
+
+//board representation: AxB (0,0 at bottom left)
 
 //stats: HP, Attack, and Movement
 castor::relation onTeam(
 	castor::lref<std::string> charName, castor::lref<std::string> teamName,
-	castor::lref<int> hp, castor::lref<int> attack, castor::lref<int> movement )
+	castor::lref<int> hp, castor::lref<int> attack, castor::lref<int> movement,
+	castor::lref<int> posX = { }, castor::lref<int> posY = { } )
 {
 	using namespace castor;
-	return eq( charName, "Lance" ) && eq( teamName, "A" ) && eq( hp, 2 ) && eq( attack, 1 ) && eq( movement, 1 )
-		|| eq( charName, "Arthur" ) && eq( teamName, "A" ) && eq( hp, 1 ) && eq( attack, 1 ) && eq( movement, 1 )
-		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 10 ) && eq( attack, 5 ) && eq( movement, 1 )
+	return eq( charName, "Lance" ) && eq( teamName, "A" ) && eq( hp, 2 ) && eq( attack, 1 ) && eq( movement, 1 ) && eq( posX, 0 ) && eq (posY, 2 )
+		|| eq( charName, "Arthur" ) && eq( teamName, "A" ) && eq( hp, 1 ) && eq( attack, 1 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq( posY, 2)
+		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 1 ) && eq( attack, 1 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq(posY, 0)
 		;
 }
 castor::relation teamNames( castor::lref<std::string> myTeam, castor::lref<std::string> enemyTeam )
@@ -64,6 +77,50 @@ castor::relation someTeamAllDead( CharInfoMap& charInfos, castor::lref<std::stri
 }
 //finding a path
 
+//////////////////////////////////////////////////////////////////////////////////////////
+//[BOARD REPRESENTATIONS]
+const int g_mapWidth = 2;
+const int g_mapHeight = 2;
+castor::relation coordsWithinMap( castor::lref<int> posX, castor::lref<int> posY )
+{
+	using namespace castor;
+	return predicate( 0 <= posX ) && predicate( posX <= g_mapWidth )
+		&& predicate( 0 <= posY ) && predicate( posY <= g_mapHeight )
+		;
+}
+castor::relation adjacentCoords(
+	castor::lref<int> curPosX, castor::lref<int> curPosY,
+	castor::lref<int> adjPosX, castor::lref<int> adjPosY
+	)
+{
+	return eq( curPosX.get()-1, adjPosX ) && eq( curPosY, adjPosY ) //left
+		|| eq( curPosX.get()+1, adjPosX ) && eq( curPosY, adjPosY ) //right
+		|| eq( curPosX, adjPosX ) && eq( curPosY.get()+1, adjPosY ) //up
+		|| eq( curPosX, adjPosX ) && eq( curPosY.get()-1, adjPosY ) //down
+		;
+}
+//////////////////////////////////////////////////////////////////////////////////////////
+//[PLAYER MOVEMENT]
+castor::relation playerCanMoveTo( 
+	castor::lref<int> curPosX, castor::lref<int> curPosY,
+	castor::lref<int> adjPosX, castor::lref<int> adjPosY 
+	)
+{
+	return adjacentCoords( curPosX, curPosY, adjPosX, adjPosY )
+		&& coordsWithinMap( adjPosX, adjPosY )
+		;
+}
+castor::relation playerCanAttack(
+	castor::lref<int> myPosX, castor::lref<int> myPosY,
+	castor::lref<int> foePosX, castor::lref<int> foePosY
+	)
+{
+	return adjacentCoords( myPosX, myPosY, foePosX, foePosY )
+		;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
 using CharInfoList = std::list<charInfo>;
 using CharInfoListLref = castor::lref<CharInfoList>;
 //castor::relation teamAlive( CharInfoListLref& charInfos, castor::lref<std::string> teamName )
