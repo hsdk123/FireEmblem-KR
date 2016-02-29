@@ -1,4 +1,7 @@
 #pragma once
+#include "castor1.1\castor.h"
+#include <map>
+#include <ctime>
 
 castor::relation gender( castor::lref < std::string > p, castor::lref<std::string> g )
 {

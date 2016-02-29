@@ -130,7 +130,7 @@ void fightPhase( CharInfoMap& charInfos )
 	}
 }
 
-void main()
+int main()
 {
 	using namespace std;
 	using namespace castor;
@@ -186,5 +186,5 @@ void main()
 	std::string input;
 	cout << "press enter to finish";
 	std::getline( std::cin, input );
-	return;
+	return 0;
 }
