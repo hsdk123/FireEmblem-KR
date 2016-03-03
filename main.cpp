@@ -58,40 +58,8 @@ void fightPhase( CharInfoMap& charInfos )
 			{
 				//attack an enemy team player
 				//strategy
-				//[MOVE 1. look for an enemy that is adjacent => attack]
+				//[MOVE 1. just move to an adjacent position on the map]
 				relation enemyInfo = onTeam( enemyName, oppTeamName, { }, { }, { } );
-				while ( enemyInfo() )
-				{
-					//note: 'while' is used so that we keep looping until we find an enemy we can attack and hp > 0
-					auto& curEnemy = charInfos[enemyName.get()];
-					relation canAttack = playerCanAttack( curChar._pos[0], curChar._pos[1], curEnemy._pos[0], curEnemy._pos[1] );
-					if ( canAttack() && curEnemy._hp > 0 )
-					{
-						curEnemy._hp -= curChar._attack;
-						cout << string_format( "%s(team:%s[%i,%i]) atkd %s(team:%s, rem-hp:%i)[%i,%i]",
-											   charName.get().c_str(), curTeamName.get().c_str(),
-											   curChar._pos[0], curChar._pos[1],
-											   enemyName.get().c_str(), oppTeamName.get().c_str(), curEnemy._hp,
-											   curEnemy._pos[0], curEnemy._pos[1] ) << endl;
-						//check if enemy dead
-						if ( curEnemy._hp <= 0 )
-						{
-							//update player's position to enemy's
-							curChar._pos = { curEnemy._pos[0], curEnemy._pos[1] };
-							cout << string_format( "\n%s(team:%s) has died!\n",
-												   enemyName.get().c_str(), oppTeamName.get().c_str() ) << endl;
-						}
-
-						evalGameState( charInfos );
-						if ( g_GameState != 0 )
-							return;
-
-						//each player can only attack 1 enemy
-						break;
-					}
-				}
-				enemyName.reset();
-				//[MOVE 2. just move to an adjacent position on the map]
 				{
 					//move to a random adjacent point
 					{
@@ -124,6 +92,39 @@ void fightPhase( CharInfoMap& charInfos )
 							++i;
 						}
 					}
+				//[MOVE 2. look for an enemy that is adjacent => attack]
+				while ( enemyInfo() )
+				{
+					//note: 'while' is used so that we keep looping until we find an enemy we can attack and hp > 0
+					auto& curEnemy = charInfos[enemyName.get()];
+					relation canAttack = playerCanAttack( curChar._pos[0], curChar._pos[1], curEnemy._pos[0], curEnemy._pos[1] );
+					if ( canAttack() && curEnemy._hp > 0 )
+					{
+						curEnemy._hp -= curChar._attack;
+						cout << string_format( "%s(team:%s[%i,%i]) atkd %s(team:%s, rem-hp:%i)[%i,%i]",
+											   charName.get().c_str(), curTeamName.get().c_str(),
+											   curChar._pos[0], curChar._pos[1],
+											   enemyName.get().c_str(), oppTeamName.get().c_str(), curEnemy._hp,
+											   curEnemy._pos[0], curEnemy._pos[1] ) << endl;
+						/*check if enemy dead
+						if ( curEnemy._hp <= 0 )
+						{
+							//update player's position to enemy's
+							curChar._pos = { curEnemy._pos[0], curEnemy._pos[1] };
+							cout << string_format( "\n%s(team:%s) has died!\n",
+												   enemyName.get().c_str(), oppTeamName.get().c_str() ) << endl;
+						}*/
+
+						evalGameState( charInfos );
+						if ( g_GameState != 0 )
+							return;
+
+						//each player can only attack 1 enemy
+						break;
+					}
+				}
+				enemyName.reset();
+				
 				}
 			}
 		}
@@ -142,6 +143,16 @@ int main()
 
 	using CharInfoVec = map<string/*name*/, charInfo>;
 	CharInfoVec playerInfos;
+	//Initialize board representation
+	for(int i = 0; i < g_mapWidth;i++)
+	{
+		for (int j = 0; j < g_mapHeight; j++)
+		{
+			gameMap[i][j]._movementValue = 1;
+			gameMap[i][j]._defenseBonus = 0;
+			gameMap[i][j]._occupant = nullptr;
+		}
+	}
 
 	//[POPULATE CHARACTERS]
 	{
@@ -158,6 +169,7 @@ int main()
 			charInfo._movement = movement.get();
 			charInfo._pos = { posX.get(), posY.get() };
 			playerInfos.emplace( charName.get(), charInfo );
+			gameMap[posX.get()][posY.get()]._occupant = &charInfo;
 		}
 	}
 

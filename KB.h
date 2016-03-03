@@ -3,6 +3,10 @@
 #include <map>
 #include <ctime>
 
+extern const int g_mapWidth = 10;
+extern const int g_mapHeight = 10;
+
+
 castor::relation gender( castor::lref < std::string > p, castor::lref<std::string> g )
 {
 	using namespace castor;
@@ -33,6 +37,13 @@ struct charInfo
 };
 using CharInfoMap = std::map<std::string/*name*/, charInfo>;
 
+struct mapTile
+{
+	charInfo* _occupant;
+	int _movementValue;
+	int _defenseBonus;
+};
+
 //board representation: AxB (0,0 at bottom left)
 
 //stats: HP, Attack, and Movement
@@ -42,9 +53,9 @@ castor::relation onTeam(
 	castor::lref<int> posX = { }, castor::lref<int> posY = { } )
 {
 	using namespace castor;
-	return eq( charName, "Lance" ) && eq( teamName, "A" ) && eq( hp, 2 ) && eq( attack, 1 ) && eq( movement, 1 ) && eq( posX, 0 ) && eq (posY, 2 )
-		|| eq( charName, "Arthur" ) && eq( teamName, "A" ) && eq( hp, 1 ) && eq( attack, 1 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq( posY, 2)
-		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 1 ) && eq( attack, 1 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq(posY, 0)
+	return eq( charName, "Lance" ) && eq( teamName, "A" ) && eq( hp, 12 ) && eq( attack, 7 ) && eq( movement, 1 ) && eq( posX, 0 ) && eq (posY, 2 )
+		|| eq( charName, "Arthur" ) && eq( teamName, "A" ) && eq( hp, 10 ) && eq( attack, 8 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq( posY, 2)
+		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 16 ) && eq( attack, 15 ) && eq( movement, 1 ) && eq( posX, 6 ) && eq(posY, 0)
 		;
 }
 castor::relation teamNames( castor::lref<std::string> myTeam, castor::lref<std::string> enemyTeam )
@@ -82,8 +93,11 @@ castor::relation someTeamAllDead( CharInfoMap& charInfos, castor::lref<std::stri
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //[BOARD REPRESENTATIONS]
-const int g_mapWidth = 2;
-const int g_mapHeight = 2;
+
+//2D array of mapTile structs
+mapTile gameMap[g_mapWidth][g_mapHeight];
+
+
 castor::relation coordsWithinMap( castor::lref<int> posX, castor::lref<int> posY )
 {
 	using namespace castor;
