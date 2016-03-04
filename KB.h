@@ -28,18 +28,26 @@ castor::relation exceededMaxTurns( int curNumTurns )
 //stats: HP, Attack, and Movement
 struct charInfo
 {
+    
 	std::string _name;
 	std::string _teamName;
 	int _hp;
 	int _attack;
 	int _movement;
 	std::vector<int> _pos;
+	
+	charInfo() : _name(""), 
+                 _teamName(""), 
+                 _hp(0),
+                 _attack(0),
+                 _movement(0) 
+                 {}
 };
 using CharInfoMap = std::map<std::string/*name*/, charInfo>;
 
 struct mapTile
 {
-	charInfo* _occupant;
+	charInfo _occupant;
 	int _movementValue;
 	int _defenseBonus;
 };
@@ -55,7 +63,7 @@ castor::relation onTeam(
 	using namespace castor;
 	return eq( charName, "Lance" ) && eq( teamName, "A" ) && eq( hp, 12 ) && eq( attack, 7 ) && eq( movement, 1 ) && eq( posX, 0 ) && eq (posY, 2 )
 		|| eq( charName, "Arthur" ) && eq( teamName, "A" ) && eq( hp, 10 ) && eq( attack, 8 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq( posY, 2)
-		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 16 ) && eq( attack, 15 ) && eq( movement, 1 ) && eq( posX, 6 ) && eq(posY, 0)
+		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 16 ) && eq( attack, 15 ) && eq( movement, 1 ) && eq( posX, 3 ) && eq(posY, 0)
 		;
 }
 castor::relation teamNames( castor::lref<std::string> myTeam, castor::lref<std::string> enemyTeam )
@@ -134,6 +142,21 @@ castor::relation playerCanAttack(
 {
 	return adjacentCoords( myPosX, myPosY, foePosX, foePosY )
 		;
+}
+
+//[UNIT/MAP INTERACTION]
+
+
+castor::relation existAdjacentEnemies(
+	castor::lref<int> myPosX, castor::lref<int> myPosY, castor::lref<std::string> enemyTeam
+    	)
+{
+	using namespace castor;
+	return eq(enemyTeam, gameMap[myPosX.get()+1][myPosY.get()]._occupant._teamName)
+		|| eq(enemyTeam, gameMap[myPosX.get()-1][myPosY.get()]._occupant._teamName)
+		|| eq(enemyTeam, gameMap[myPosX.get()][myPosY.get()+1]._occupant._teamName)
+        || eq(enemyTeam, gameMap[myPosX.get()][myPosY.get()-1]._occupant._teamName)   
+    ;
 }
 
 

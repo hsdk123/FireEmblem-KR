@@ -58,8 +58,10 @@ void fightPhase( CharInfoMap& charInfos )
 			{
 				//attack an enemy team player
 				//strategy
-				//[MOVE 1. just move to an adjacent position on the map]
+				//[MOVE 1. Move to an adjacent position on the map if there is not already an enemy in attack range (adjacent).
 				relation enemyInfo = onTeam( enemyName, oppTeamName, { }, { }, { } );
+				//relation canAttackImmediately = existAdjacentEnemies(curChar._pos[0], curChar._pos[1], oppTeamName);
+				//if ( !canAttackImmediately())
 				{
 					//move to a random adjacent point
 					{
@@ -150,10 +152,10 @@ int main()
 		{
 			gameMap[i][j]._movementValue = 1;
 			gameMap[i][j]._defenseBonus = 0;
-			gameMap[i][j]._occupant = nullptr;
+			gameMap[i][j]._occupant = charInfo();
 		}
 	}
-
+	
 	//[POPULATE CHARACTERS]
 	{
 		lref<string> charName, teamName;
@@ -169,7 +171,7 @@ int main()
 			charInfo._movement = movement.get();
 			charInfo._pos = { posX.get(), posY.get() };
 			playerInfos.emplace( charName.get(), charInfo );
-			gameMap[posX.get()][posY.get()]._occupant = &charInfo;
+			gameMap[posX.get()][posY.get()]._occupant = charInfo;
 		}
 	}
 
