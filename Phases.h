@@ -1,4 +1,6 @@
 #pragma once
+#include "KB.h"
+
 extern int g_GameState;
 extern int g_turns;
 extern MapTile g_gameMap[g_mapWidth][g_mapHeight];
@@ -51,7 +53,7 @@ namespace Phases
 			}
 			if ( i == 0 )
 			{
-				cout << string_format( "%s cannot move anywhere\n", curChar._name );
+				cout << curChar._name << "cannot move anywhere\n";
 				return;
 			}
 			adjPosX.reset();

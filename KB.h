@@ -53,7 +53,7 @@ struct MapTile
 
 enum class StrategyType
 {
-	default, //move + attack if enemy in range
+	standard, //move + attack if enemy in range
 	run, //just keep running without attacking
 	aggressive //if attackable enemy exists, attacks right away
 };
@@ -126,8 +126,8 @@ castor::relation characterStrategyType( castor::lref<std::string> charName, cast
 {
 	using namespace castor;
 	return eq( charName, "Lance" ) && eq( strategyType, StrategyType::run )
-		|| eq( charName, "Arthur" ) && eq( strategyType, StrategyType::default )
-		|| eq( charName, "Homer" ) && eq( strategyType, StrategyType::default )
+		|| eq( charName, "Arthur" ) && eq( strategyType, StrategyType::standard )
+		|| eq( charName, "Homer" ) && eq( strategyType, StrategyType::standard )
 		|| eq( charName, "Diana" ) && eq( strategyType, StrategyType::aggressive )
 		;
 }

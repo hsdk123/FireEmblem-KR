@@ -23,13 +23,13 @@ int main()
 
 	//[USER INPUT]
 	std::string input;
-	std::string msg = "\nENTER TYPE OF GAME: ('DEFAULT' OR 'CUSTOM') \n"
-		+ string( " (default: auto run a normal game) \n (custom: custom unit choosing, difficulty level, etc.)\n (use lowercase)\n" );
+	std::string msg = "\nENTER TYPE OF GAME: ('STANDARD' OR 'CUSTOM') \n"
+		+ string( " (standard: auto run a normal game) \n (custom: custom unit choosing, difficulty level, etc.)\n (use lowercase)\n" );
 	cout << msg;
 	std::getline( std::cin, input );
 
 	string wantedUnitType = "all";
-	if ( input != "default" )
+	if ( input != "standard" )
 	{
 		std::string msg = "\nENTER WANTED UNIT TYPE: \n"
 			+ string( " ('rock' or 'paper' or 'scissors')\n (use lowercase)\n" );
@@ -54,7 +54,7 @@ int main()
 			g_gameMap[i][j]._occupant = CharInfo();
 		}
 	}
-	
+	cout << "Successful initialization of board";
 	//[POPULATE CHARACTERS]
 	{
 		lref<string> charName, teamName;
@@ -82,7 +82,7 @@ int main()
 			UpdateCharPos( charInfo, posX.get(), posY.get() );
 		}
 	}
-
+	cout << "Successful initialization of characters";
 	//[GAME LOOP]
 	while ( g_GameState == 0 )
 	{
