@@ -54,7 +54,6 @@ int main()
 			g_gameMap[i][j]._occupant = CharInfo();
 		}
 	}
-	cout << "Successful initialization of board";
 	//[POPULATE CHARACTERS]
 	{
 		lref<string> charName, teamName;
@@ -70,7 +69,6 @@ int main()
 				if ( !charHasWeaponType() )
 					continue;
 			}
-
 			CharInfo charInfo;
 			charInfo._name = charName.get();
 			charInfo._teamName = teamName.get();
@@ -82,7 +80,6 @@ int main()
 			UpdateCharPos( charInfo, posX.get(), posY.get() );
 		}
 	}
-	cout << "Successful initialization of characters";
 	//[GAME LOOP]
 	while ( g_GameState == 0 )
 	{

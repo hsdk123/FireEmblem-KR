@@ -10,6 +10,7 @@ void UpdateCharPos( CharInfo& charInfo, const int x, const int y )
 	g_gameMap[charInfo._pos[0]][charInfo._pos[1]]._occupant = CharInfo();
 	g_gameMap[x][y]._occupant = charInfo;
 	charInfo._pos = { x,y };
+	
 }
 
 namespace Phases

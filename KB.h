@@ -72,7 +72,7 @@ castor::relation onTeam(
 	return eq( charName, "Lance" ) && eq( teamName, "A" ) && eq( hp, 12 ) && eq( attack, 7 ) && eq( movement, 1 ) && eq( posX, 0 ) && eq (posY, 2 )
 		|| eq( charName, "Arthur" ) && eq( teamName, "A" ) && eq( hp, 10 ) && eq( attack, 8 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq( posY, 2)
 		|| eq( charName, "Homer" ) && eq( teamName, "A" ) && eq( hp, 3 ) && eq( attack, 1 ) && eq( movement, 1 ) && eq( posX, 2 ) && eq( posY, 1 )
-		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 16 ) && eq( attack, 15 ) && eq( movement, 1 ) && eq( posX, 3 ) && eq(posY, 0)
+		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 16 ) && eq( attack, 15 ) && eq( movement, 1 ) && eq( posX, 2 ) && eq(posY, 2)
 		;
 }
 castor::relation teamNames( castor::lref<std::string> myTeam, castor::lref<std::string> enemyTeam )
@@ -162,8 +162,8 @@ MapTile g_gameMap[g_mapWidth][g_mapHeight];
 castor::relation coordsWithinMap( castor::lref<int> posX, castor::lref<int> posY )
 {
 	using namespace castor;
-	return predicate( 0 <= posX ) && predicate( posX <= g_mapWidth )
-		&& predicate( 0 <= posY ) && predicate( posY <= g_mapHeight )
+	return predicate( 0 <= posX ) && predicate( posX < g_mapWidth )
+		&& predicate( 0 <= posY ) && predicate( posY < g_mapHeight )
 		;
 }
 castor::relation adjacentCoords(
