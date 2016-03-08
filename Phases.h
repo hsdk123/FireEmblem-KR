@@ -54,7 +54,7 @@ namespace Phases
 			}
 			if ( i == 0 )
 			{
-				cout << curChar._name << "cannot move anywhere\n";
+				cout << curChar._name << " cannot move anywhere\n";
 				return;
 			}
 			adjPosX.reset();
@@ -64,7 +64,8 @@ namespace Phases
 		}
 		//actually make the movement
 		i = 0;
-		relation canMoveTo2 = playerCanMoveTo( charInfos, curChar._pos[0], curChar._pos[1], adjPosX, adjPosY );
+		lref<TerrainType> terrainType;
+		relation canMoveTo2 = playerCanMoveTo( charInfos, curChar._pos[0], curChar._pos[1], adjPosX, adjPosY, terrainType );
 		while ( canMoveTo2() )
 		{
 			if ( !cellIsOccupied( charInfos, adjPosX.get(), adjPosY.get() ) )
@@ -76,6 +77,7 @@ namespace Phases
 										   curChar._pos[0], curChar._pos[1], adjPosX.get(), adjPosY.get()
 										   ) << endl;
 
+					//update character position
 					UpdateCharPos( curChar, adjPosX.get(), adjPosY.get() );
 					break;
 				}
@@ -99,13 +101,34 @@ namespace Phases
 				relation canAttack = playerCanAttack( curChar._pos[0], curChar._pos[1], curEnemy._pos[0], curEnemy._pos[1] );
 				if ( canAttack() && curEnemy._hp > 0 )
 				{
-					curEnemy._hp -= curChar._attack;
-					cout << string_format( "%s(team:%s[%i,%i]) atkd %s(team:%s, rem-hp:%i)[%i,%i] %s \n",
+					//calculate damage
+					float attack = static_cast<float>( curChar._attack );
+					float attackMultiplier;
+					{
+						lref<float> multiplier;
+						lref<string> atkWeapon, defWeapon;
+						relation charWeapon = characterHeldWeapon( curChar._name, atkWeapon );
+						relation enemyWeapon = characterHeldWeapon( enemyName, defWeapon );
+						if ( charWeapon() && enemyWeapon() )
+						{
+							relation weaponMultiplier = weaponEffectOnWeapon( atkWeapon, defWeapon, multiplier );
+							if ( weaponMultiplier() )
+								attackMultiplier = multiplier.get();
+						}
+					}
+
+					curEnemy._hp -= (attack * attackMultiplier);
+					cout << string_format( "%s(team:%s[%i,%i]) atkd %s(team:%s, rem-hp:%.1f)[%i,%i] %s \n",
 										   curChar._name.c_str(), curChar._teamName.c_str(),
 										   curChar._pos[0], curChar._pos[1],
 										   enemyName.get().c_str(), oppTeamName.c_str(), curEnemy._hp,
 										   curEnemy._pos[0], curEnemy._pos[1],
 										   suffix.c_str());
+
+					lref<string> msg;
+					relation atkEffectMsg = weaponEffectMsg( attackMultiplier, msg );
+					if ( atkEffectMsg() )
+						cout << msg.get();
 
 					//print appropriate dialogue
 					{
@@ -122,8 +145,13 @@ namespace Phases
 
 					if ( curEnemy._hp <= 0 )
 					{
-					//if enemy is dead, remove it from the map
-					g_gameMap[curEnemy._pos[0]][curEnemy._pos[1]]._occupant = CharInfo();
+						//if enemy is dead, remove it from the map
+						cout << string_format( "-- %s died! -- \n", curEnemy._name.c_str() );
+						g_gameMap[curEnemy._pos[0]][curEnemy._pos[1]]._occupant = CharInfo();
+						lref<string> dialogue3;
+						relation charDeathDialogue = characterDeathDialogue( curEnemy._name, dialogue3 );
+						if ( charDeathDialogue() )
+							cout << dialogue3.get();
 					}
 					return true;
 				}

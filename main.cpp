@@ -57,7 +57,8 @@ int main()
 	//[POPULATE CHARACTERS]
 	{
 		lref<string> charName, teamName;
-		lref<int> hp, attack, movement, posX, posY;
+		lref<float> hp;
+		lref<int> attack, movement, posX, posY;
 		relation characterInfo = onTeam( charName, teamName, hp, attack, movement, posX, posY );
 		while ( characterInfo() )
 		{
@@ -69,15 +70,20 @@ int main()
 				if ( !charHasWeaponType() )
 					continue;
 			}
-			CharInfo charInfo;
-			charInfo._name = charName.get();
-			charInfo._teamName = teamName.get();
-			charInfo._hp = hp.get();
-			charInfo._attack = attack.get();
-			charInfo._movement = movement.get();
-			charInfo._pos = { posX.get(), posY.get() };
-			playerInfos.emplace( charName.get(), charInfo );
-			UpdateCharPos( charInfo, posX.get(), posY.get() );
+
+			relation charInBounds = coordsWithinMap( posX, posY );
+			if ( charInBounds() )
+			{
+				CharInfo charInfo;
+				charInfo._name = charName.get();
+				charInfo._teamName = teamName.get();
+				charInfo._hp = hp.get();
+				charInfo._attack = attack.get();
+				charInfo._movement = movement.get();
+				charInfo._pos = { posX.get(), posY.get() };
+				playerInfos.emplace( charName.get(), charInfo );
+				UpdateCharPos( charInfo, posX.get(), posY.get() );
+			}
 		}
 	}
 	//[GAME LOOP]

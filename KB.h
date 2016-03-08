@@ -3,8 +3,8 @@
 #include <map>
 #include <ctime>
 
-extern const int g_mapWidth = 3;
-extern const int g_mapHeight = 3;
+const int g_mapWidth = 3;
+const int g_mapHeight = 3;
 
 castor::relation gender( castor::lref < std::string > p, castor::lref<std::string> g )
 {
@@ -30,14 +30,14 @@ struct CharInfo
     
 	std::string _name;
 	std::string _teamName;
-	int _hp;
+	float _hp;
 	int _attack;
 	int _movement;
 	std::vector<int> _pos;
 	
 	CharInfo() : _name(""), 
                  _teamName(""), 
-                 _hp(0),
+                 _hp(0.0f),
                  _attack(0),
                  _movement(0) 
                  {}
@@ -49,6 +49,14 @@ struct MapTile
 	CharInfo _occupant;
 	int _movementValue;
 	int _defenseBonus;
+};
+
+enum class TerrainType
+{
+	normal,
+	water,
+	tree,
+	boulder
 };
 
 enum class StrategyType
@@ -65,8 +73,9 @@ enum class StrategyType
 //stats: HP, Attack, and Movement
 castor::relation onTeam(
 	castor::lref<std::string> charName, castor::lref<std::string> teamName,
-	castor::lref<int> hp, castor::lref<int> attack, castor::lref<int> movement,
-	castor::lref<int> posX = { }, castor::lref<int> posY = { } )
+	castor::lref<float> hp, castor::lref<int> attack, castor::lref<int> movement,
+	castor::lref<int> posX = { }, castor::lref<int> posY = { }
+	)
 {
 	using namespace castor;
 	return eq( charName, "Lance" ) && eq( teamName, "A" ) && eq( hp, 12 ) && eq( attack, 7 ) && eq( movement, 1 ) && eq( posX, 0 ) && eq (posY, 2 )
@@ -110,13 +119,13 @@ castor::relation someTeamAllDead( CharInfoMap& charInfos, castor::lref<std::stri
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //[CHARACTER REPRESENTATIONS]
-castor::relation characterHeldWeaponType( castor::lref<std::string> charName, castor::lref<std::string> weaponType )
+castor::relation characterHeldWeapon( castor::lref<std::string> charName, castor::lref<std::string> weapon )
 {
 	using namespace castor;
-	return eq( charName, "Lance" ) && eq( weaponType, "rock" )
-		|| eq( charName, "Arthur" ) && eq( weaponType, "paper" )
-		|| eq( charName, "Homer" ) && eq( weaponType, "scissors" )
-		|| eq( charName, "Diana" ) && eq( weaponType, "scissors" )
+	return eq( charName, "Lance" ) && eq( weapon, "Hammer of Wrath" )
+		|| eq( charName, "Arthur" ) && eq( weapon, "Blade of Doom" )
+		|| eq( charName, "Homer" ) && eq( weapon, "Paper Towel" )
+		|| eq( charName, "Diana" ) && eq( weapon, "Spear of Life" )
 		;
 }
 
@@ -152,6 +161,16 @@ castor::relation characterAtkdDialogue( castor::lref<std::string> charName, cast
 		;
 }
 
+castor::relation characterDeathDialogue( castor::lref<std::string> charName, castor::lref<std::string> dialogue )
+{
+	using namespace castor;
+	return eq( charName, "Lance" ) && eq( dialogue, "Lance: See you in the afterlife\n" )
+		|| eq( charName, "Arthur" ) && eq( dialogue, "Arthur: My sword will live on!\n" )
+		|| eq( charName, "Homer" ) && eq( dialogue, "Homer: Dang \n" )
+		|| eq( charName, "Diana" ) && eq( dialogue, "Diana: My comrades will avenge me\n" )
+		;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////
 //[BOARD REPRESENTATIONS]
 
@@ -178,37 +197,6 @@ castor::relation adjacentCoords(
 		;
 }
 //////////////////////////////////////////////////////////////////////////////////////////
-//[PLAYER MOVEMENT]
-//Note: MIXING MULTIPLE PREDICATES TOGETHER TO FORM MORE COMPLEX [CAN WRITE IN LOG]
-//Note: NEED TO MAKE SURE THAT OUTPUTS AREN'T UNKNOWNS (EX. WHEN CHECKPOSX, NOT DEFINED)
-bool cellIsOccupied(
-	CharInfoMap& charInfos, int checkPosX, int checkPosY
-	)
-{
-	return (g_gameMap[checkPosX][checkPosY]._occupant._hp > 0);
-}
-
-castor::relation playerCanMoveTo( 
-	CharInfoMap& charInfos,
-	castor::lref<int> curPosX, castor::lref<int> curPosY,
-	castor::lref<int> adjPosX, castor::lref<int> adjPosY 
-	)
-{
-	using namespace castor;
-	return adjacentCoords( curPosX, curPosY, adjPosX, adjPosY )
-		&& coordsWithinMap( adjPosX, adjPosY )
-		;
-}
-castor::relation playerCanAttack(
-	castor::lref<int> myPosX, castor::lref<int> myPosY,
-	castor::lref<int> foePosX, castor::lref<int> foePosY
-	)
-{
-	return adjacentCoords( myPosX, myPosY, foePosX, foePosY )
-		;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////
 //[WEAPON INTERACTION]
 
 //note: backtracking allows both strong against && weak against checks
@@ -227,8 +215,17 @@ castor::relation weaponIsType(
 	)
 {
 	return eq( weapon1, "Hammer of Wrath" ) && eq( type, "rock" )
-		|| eq( weapon1, "Paper Towel" ) && eq( type, "paper" )
-		|| eq( weapon1, "Blade of Doom" ) && eq( type, "scissors" )
+		^ eq( weapon1, "Paper Towel" ) && eq( type, "paper" )
+		^ eq( weapon1, "Blade of Doom" ) && eq( type, "scissors" )
+		^ eq( type, "scissors" )
+		;
+}
+
+castor::relation characterHeldWeaponType( castor::lref<std::string> charName, castor::lref<std::string> weaponType )
+{
+	using namespace castor;
+	lref<std::string> weapon;
+	return characterHeldWeapon( charName, weapon ) && weaponIsType( weapon, weaponType )
 		;
 }
 
@@ -244,12 +241,25 @@ castor::relation weaponIsStrongerThanWeapon(
 		;
 }
 
+const float g_atk_effective = 1.5;
+const float g_atk_uneffective = 0.5;
+
 castor::relation weaponEffectOnWeapon(
-	castor::lref<std::string> weapon1, castor::lref<std::string> weapon2, castor::lref<int> effectMultiplier
+	castor::lref<std::string> weapon1, castor::lref<std::string> weapon2, castor::lref<float> effectMultiplier
 	)
 {
-	return weaponIsStrongerThanWeapon( weapon1, weapon2 ) && eq( effectMultiplier, 1.5 )
-		|| eq( effectMultiplier, 0.5 )
+	return weaponIsStrongerThanWeapon( weapon1, weapon2 ) && eq( effectMultiplier, g_atk_effective )
+		//Note: basically saying if weapons of same time, also 0.5
+		|| eq( effectMultiplier, g_atk_uneffective )
+		;
+}
+
+castor::relation weaponEffectMsg(
+	castor::lref<float> multiplier, castor::lref<std::string> msg
+	)
+{
+	return eq( multiplier, g_atk_effective ) && eq( msg, "attack was effective! \n" )
+		^ eq( msg, "attack didn't do much... \n" )
 		;
 }
 
@@ -268,9 +278,74 @@ castor::relation existAdjacentEnemies(
     ;
 }
 
-//unit vs terrain type
-//
+//gives the ability to create maps
+castor::relation tileIsTerrainTypeSpecial(
+	castor::lref<int> posX, castor::lref<int> posY, castor::lref<TerrainType> type
+	)
+{
+	return eq( posX, 0 ) && eq( posY, 1 ) && eq( type, TerrainType::tree )
+		|| eq( posX, 0 ) && eq( posY, 4 ) && eq( type, TerrainType::tree )
+		|| eq( posX, 0 ) && eq( posY, 5 ) && eq( type, TerrainType::tree )
+		|| eq( posX, 0 ) && eq( posY, 6 ) && eq( type, TerrainType::tree )
+		|| eq( posX, 3 ) && eq( posY, 1 ) && eq( type, TerrainType::water )
+		|| eq( posX, 3 ) && eq( posY, 2 ) && eq( type, TerrainType::water )
+		|| eq( posX, 3 ) && eq( posY, 3 ) && eq( type, TerrainType::water )
+		|| eq( posX, 5 ) && eq( posY, 0 ) && eq( type, TerrainType::boulder )
+		|| eq( posX, 5 ) && eq( posY, 1 ) && eq( type, TerrainType::boulder )
+		|| eq( posX, 2 ) && eq( posY, 6 ) && eq( type, TerrainType::boulder )
+		|| eq( posX, 2 ) && eq( posY, 7 ) && eq( type, TerrainType::boulder )
+		;
+}
 
+castor::relation tileIsTerrainType(
+	castor::lref<int> posX, castor::lref<int> posY, castor::lref<TerrainType> type
+	)
+{
+	using namespace castor;
+	return tileIsTerrainTypeSpecial( posX, posY, type )
+		|| eq( type, TerrainType::normal ) //note: using a cut (not an or)
+		;
+}
+
+//can make certain tiles hp ups, or hp downs
+
+//unit vs terrain type
+//element type
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//[PLAYER MOVEMENT]
+//Note: MIXING MULTIPLE PREDICATES TOGETHER TO FORM MORE COMPLEX [CAN WRITE IN LOG]
+//Note: NEED TO MAKE SURE THAT OUTPUTS AREN'T UNKNOWNS (EX. WHEN CHECKPOSX, NOT DEFINED)
+bool cellIsOccupied(
+	CharInfoMap& charInfos, int checkPosX, int checkPosY
+	)
+{
+	return ( g_gameMap[checkPosX][checkPosY]._occupant._hp > 0 );
+}
+
+castor::relation playerCanMoveTo(
+	CharInfoMap& charInfos,
+	castor::lref<int> curPosX, castor::lref<int> curPosY,
+	castor::lref<int> adjPosX, castor::lref<int> adjPosY,
+	castor::lref<TerrainType> terrainType = { }
+	)
+{
+	using namespace castor;
+	//lref<TerrainType> terrainType;
+	return adjacentCoords( curPosX, curPosY, adjPosX, adjPosY )
+		&& coordsWithinMap( adjPosX, adjPosY )
+		&& tileIsTerrainType( adjPosX, adjPosY, terrainType )
+		&& eq( terrainType, TerrainType::normal )
+		;
+}
+castor::relation playerCanAttack(
+	castor::lref<int> myPosX, castor::lref<int> myPosY,
+	castor::lref<int> foePosX, castor::lref<int> foePosY
+	)
+{
+	return adjacentCoords( myPosX, myPosY, foePosX, foePosY )
+		;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////
 using CharInfoList = std::list<CharInfo>;
