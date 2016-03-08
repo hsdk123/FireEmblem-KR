@@ -74,6 +74,7 @@ enum class StrategyType
 //board representation: AxB (0,0 at bottom left)
 
 //stats: HP, Attack, and Movement
+-castor::relation onTeam(
 	castor::lref<std::string> charName, castor::lref<std::string> teamName,
 	castor::lref<float> hp, castor::lref<int> attack, castor::lref<int> movement,
 	castor::lref<int> posX = { }, castor::lref<int> posY = { }
