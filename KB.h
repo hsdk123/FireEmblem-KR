@@ -74,19 +74,24 @@ enum class StrategyType
 //board representation: AxB (0,0 at bottom left)
 
 //stats: HP, Attack, and Movement
-castor::relation onTeam(
 	castor::lref<std::string> charName, castor::lref<std::string> teamName,
 	castor::lref<float> hp, castor::lref<int> attack, castor::lref<int> movement,
 	castor::lref<int> posX = { }, castor::lref<int> posY = { }
 	)
 {
 	using namespace castor;
-	return eq( charName, "Lance" ) && eq( teamName, "A" ) && eq( hp, 12 ) && eq( attack, 7 ) && eq( movement, 1 ) && eq( posX, 0 ) && eq (posY, 2 )
-		|| eq( charName, "Arthur" ) && eq( teamName, "A" ) && eq( hp, 10 ) && eq( attack, 8 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq( posY, 2)
-		|| eq( charName, "Homer" ) && eq( teamName, "A" ) && eq( hp, 3 ) && eq( attack, 1 ) && eq( movement, 1 ) && eq( posX, 2 ) && eq( posY, 1 )
-		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 16 ) && eq( attack, 10 ) && eq( movement, 1 ) && eq( posX, 2 ) && eq(posY, 2)
-		|| eq( charName, "Sorn" ) && eq( teamName, "B" ) && eq( hp, 7 ) && eq( attack, 4 ) && eq( movement, 1 ) && eq( posX, 2 ) && eq(posY, 0)
-		|| eq( charName, "Vesta" ) && eq( teamName, "B" ) && eq( hp, 10 ) && eq( attack, 2 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq(posY, 1)
+	return eq( charName, "Lance" ) && eq( teamName, "A" ) && eq( hp, 12 ) && eq( attack, 7 ) && eq( movement, 1 ) && eq( posX, 4 ) && eq (posY, 6 )
+		|| eq( charName, "Arthur" ) && eq( teamName, "A" ) && eq( hp, 10 ) && eq( attack, 8 ) && eq( movement, 1 ) && eq( posX, 7 ) && eq( posY, 6)
+		|| eq( charName, "Homer" ) && eq( teamName, "A" ) && eq( hp, 3 ) && eq( attack, 1 ) && eq( movement, 1 ) && eq( posX, 6 ) && eq( posY, 8 )
+		|| eq( charName, "Tadeas" ) && eq( teamName, "A" ) && eq( hp, 6 ) && eq( attack, 4 ) && eq( movement, 1 ) && eq( posX, 3 ) && eq(posY, 7)
+		|| eq( charName, "Octavia" ) && eq( teamName, "A" ) && eq( hp, 13 ) && eq( attack, 5 ) && eq( movement, 1 ) && eq( posX, 3 ) && eq(posY, 9)
+		|| eq( charName, "Karina" ) && eq( teamName, "A" ) && eq( hp, 4 ) && eq( attack, 11 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq(posY, 6)
+		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 16 ) && eq( attack, 10 ) && eq( movement, 1 ) && eq( posX, 8 ) && eq(posY, 4)
+		|| eq( charName, "Sorn" ) && eq( teamName, "B" ) && eq( hp, 7 ) && eq( attack, 4 ) && eq( movement, 1 ) && eq( posX, 6 ) && eq(posY, 4)
+		|| eq( charName, "Vesta" ) && eq( teamName, "B" ) && eq( hp, 10 ) && eq( attack, 2 ) && eq( movement, 1 ) && eq( posX, 5 ) && eq(posY, 3)
+		|| eq( charName, "Babak" ) && eq( teamName, "B" ) && eq( hp, 3 ) && eq( attack, 7 ) && eq( movement, 1 ) && eq( posX, 4 ) && eq(posY, 2)
+		|| eq( charName, "Cadoc" ) && eq( teamName, "B" ) && eq( hp, 8 ) && eq( attack, 6 ) && eq( movement, 1 ) && eq( posX, 4 ) && eq(posY, 1)
+		|| eq( charName, "Nadia" ) && eq( teamName, "B" ) && eq( hp, 11 ) && eq( attack, 7 ) && eq( movement, 1 ) && eq( posX, 2 ) && eq(posY, 1)
 		;
 }
 castor::relation teamNames( castor::lref<std::string> myTeam, castor::lref<std::string> enemyTeam )
@@ -133,6 +138,12 @@ castor::relation characterHeldWeapon( castor::lref<std::string> charName, castor
 		|| eq( charName, "Diana" ) && eq( weapon, "Spear of Life" )
 		|| eq( charName, "Sorn" ) && eq( weapon, "Ageon Stone" )
 		|| eq( charName, "Vesta" ) && eq( weapon, "Amulet of Desire" )
+		|| eq( charName, "Tadeas" ) && eq( weapon, "Vengeful Enchantment" )
+		|| eq( charName, "Octavia" ) && eq( weapon, "Boulder of Misery" )
+		|| eq( charName, "Karina" ) && eq( weapon, "Arrow of Hope" )
+		|| eq( charName, "Babak" ) && eq( weapon, "Horned Dagger" )
+		|| eq( charName, "Cadoc" ) && eq( weapon, "Brass Knuckles" )
+		|| eq( charName, "Nadia" ) && eq( weapon, "Buckler Sheet" )		
 		;
 }
 
@@ -147,6 +158,12 @@ castor::relation characterStrategyType( castor::lref<std::string> charName, cast
 		|| eq( charName, "Diana" ) && eq( strategyType, StrategyType::aggressive )
 		|| eq( charName, "Sorn" ) && eq( strategyType, StrategyType::standard )
 		|| eq( charName, "Vesta" ) && eq( strategyType, StrategyType::run )
+		|| eq( charName, "Tadeas" ) && eq( strategyType, StrategyType::standard )
+		|| eq( charName, "Octavia" ) && eq( strategyType, StrategyType::standard )
+		|| eq( charName, "Karina" ) && eq( strategyType, StrategyType::aggressive )
+		|| eq( charName, "Babak" ) && eq( strategyType, StrategyType::run )
+		|| eq( charName, "Cadoc" ) && eq( strategyType, StrategyType::standard )
+		|| eq( charName, "Nadia" ) && eq( strategyType, StrategyType::standard )
 		;
 }
 
@@ -159,6 +176,12 @@ castor::relation characterAtkDialogue( castor::lref<std::string> charName, casto
 		|| eq( charName, "Diana" ) && eq( dialogue, "Diana: For the dark angels!\n" )
 		|| eq( charName, "Sorn" ) && eq( dialogue, "Sorn: Do you doubt my power now?\n" )
 		|| eq( charName, "Vesta" ) && eq( dialogue, "Vesta: Fear my wrath for it is directed at you!\n" )
+		|| eq( charName, "Tadeas" ) && eq( dialogue, "Tadeas: You are no match for my power!\n" )
+		|| eq( charName, "Octavia" ) && eq( dialogue, "Octavia: You have been warned!\n" )
+		|| eq( charName, "Karina" ) && eq( dialogue, "Karina: My arrow conquers all!\n" )
+		|| eq( charName, "Babak" ) && eq( dialogue, "Babak: I can't let you back out now...!\n" )
+		|| eq( charName, "Cadoc" ) && eq( dialogue, "Cadoc: Such a pity you had to go our this way!\n" )
+		|| eq( charName, "Nadia" ) && eq( dialogue, "Nadia: Prepare to fight!\n" )
 		;
 }
 
@@ -171,7 +194,12 @@ castor::relation characterAtkdDialogue( castor::lref<std::string> charName, cast
 		|| eq( charName, "Diana" ) && eq( dialogue, "Diana: Don't dare do that again.\n" )
 		|| eq( charName, "Sorn" ) && eq( dialogue, "Sorn: I did not see that coming.\n" )
 		|| eq( charName, "Vesta" ) && eq( dialogue, "Vesta: I may have underestimated your strength.\n" )
-
+		|| eq( charName, "Tadeas" ) && eq( dialogue, "Tadeas: I am impressed by your power.\n" )
+		|| eq( charName, "Octavia" ) && eq( dialogue, "Octavia: Watch yourself!\n" )
+		|| eq( charName, "Karina" ) && eq( dialogue, "Karina: Your power is quite fierce.\n" )
+		|| eq( charName, "Babak" ) && eq( dialogue, "Babak: Your attacks just make me stronger.\n" )
+		|| eq( charName, "Cadoc" ) && eq( dialogue, "Cadoc: I can handle your attacks with ease.\n" )
+		|| eq( charName, "Nadia" ) && eq( dialogue, "Nadia: I see that you are a commendable fighter.\n" )
 		;
 }
 
@@ -184,6 +212,12 @@ castor::relation characterDeathDialogue( castor::lref<std::string> charName, cas
 		|| eq( charName, "Diana" ) && eq( dialogue, "Diana: My comrades will avenge me.\n" )
 		|| eq( charName, "Sorn" ) && eq( dialogue, "Sorn: You were a worthy foe.\n" )
 		|| eq( charName, "Vesta" ) && eq( dialogue, "Vesta: My powers were little match.\n" )
+		|| eq( charName, "Tadeas" ) && eq( dialogue, "Tadeas: I have been defeated.\n" )
+		|| eq( charName, "Octavia" ) && eq( dialogue, "Octavia: My team will surpass my weakness.\n" )
+		|| eq( charName, "Karina" ) && eq( dialogue, "Karina: I see luck was on your side today.\n" )
+		|| eq( charName, "Babak" ) && eq( dialogue, "Babak: I have been taken against my honor.\n" )
+		|| eq( charName, "Cadoc" ) && eq( dialogue, "Cadoc: I shall be gracious in defeat.\n" )
+		|| eq( charName, "Nadia" ) && eq( dialogue, "Nadia: It only takes one battle to lose all.\n" )
 		;
 }
 
@@ -236,6 +270,12 @@ castor::relation weaponIsType(
 		^ eq( weapon1, "Ageon Stone" ) && eq( type, "rock" )
 		^ eq( weapon1, "Spear of Life" ) && eq( type, "scissors" )
 		^ eq( weapon1, "Amulet of Desire" ) && eq( type, "paper" )
+		^ eq( weapon1, "Boulder of Misery" ) && eq( type, "rock" )
+		^ eq( weapon1, "Arrow of Hope" ) && eq( type, "scissors" )
+		^ eq( weapon1, "Vengeful Enchantment" ) && eq( type, "paper" )
+		^ eq( weapon1, "Brass Knuckles" ) && eq( type, "rock" )
+		^ eq( weapon1, "Horned Dagger" ) && eq( type, "scissors" )
+		^ eq( weapon1, "Buckler Sheet" ) && eq( type, "paper" )
 		^ eq( type, "scissors" )
 		;
 }
