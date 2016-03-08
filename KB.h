@@ -12,6 +12,9 @@ castor::relation gender( castor::lref < std::string > p, castor::lref<std::strin
 	return eq( p, "Frank" ) && eq( g, "male" )
 		|| eq( p, "Mary" ) && eq( g, "female" )
 		|| eq( p, "Sam" ) && eq( g, "male" )
+		|| eq( p, "Tom" ) && eq( g, "male" )
+		|| eq( p, "Beth" ) && eq( g, "female" )
+		|| eq( p, "Ana" ) && eq( g, "female" )
 		;
 }
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +84,9 @@ castor::relation onTeam(
 	return eq( charName, "Lance" ) && eq( teamName, "A" ) && eq( hp, 12 ) && eq( attack, 7 ) && eq( movement, 1 ) && eq( posX, 0 ) && eq (posY, 2 )
 		|| eq( charName, "Arthur" ) && eq( teamName, "A" ) && eq( hp, 10 ) && eq( attack, 8 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq( posY, 2)
 		|| eq( charName, "Homer" ) && eq( teamName, "A" ) && eq( hp, 3 ) && eq( attack, 1 ) && eq( movement, 1 ) && eq( posX, 2 ) && eq( posY, 1 )
-		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 16 ) && eq( attack, 15 ) && eq( movement, 1 ) && eq( posX, 2 ) && eq(posY, 2)
+		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 16 ) && eq( attack, 10 ) && eq( movement, 1 ) && eq( posX, 2 ) && eq(posY, 2)
+		|| eq( charName, "Sorn" ) && eq( teamName, "B" ) && eq( hp, 7 ) && eq( attack, 4 ) && eq( movement, 1 ) && eq( posX, 2 ) && eq(posY, 0)
+		|| eq( charName, "Vesta" ) && eq( teamName, "B" ) && eq( hp, 10 ) && eq( attack, 2 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq(posY, 1)
 		;
 }
 castor::relation teamNames( castor::lref<std::string> myTeam, castor::lref<std::string> enemyTeam )
@@ -126,6 +131,8 @@ castor::relation characterHeldWeapon( castor::lref<std::string> charName, castor
 		|| eq( charName, "Arthur" ) && eq( weapon, "Blade of Doom" )
 		|| eq( charName, "Homer" ) && eq( weapon, "Paper Towel" )
 		|| eq( charName, "Diana" ) && eq( weapon, "Spear of Life" )
+		|| eq( charName, "Sorn" ) && eq( weapon, "Ageon Stone" )
+		|| eq( charName, "Vesta" ) && eq( weapon, "Amulet of Desire" )
 		;
 }
 
@@ -138,6 +145,8 @@ castor::relation characterStrategyType( castor::lref<std::string> charName, cast
 		|| eq( charName, "Arthur" ) && eq( strategyType, StrategyType::standard )
 		|| eq( charName, "Homer" ) && eq( strategyType, StrategyType::standard )
 		|| eq( charName, "Diana" ) && eq( strategyType, StrategyType::aggressive )
+		|| eq( charName, "Sorn" ) && eq( strategyType, StrategyType::standard )
+		|| eq( charName, "Vesta" ) && eq( strategyType, StrategyType::run )
 		;
 }
 
@@ -148,6 +157,8 @@ castor::relation characterAtkDialogue( castor::lref<std::string> charName, casto
 		|| eq( charName, "Arthur" ) && eq( dialogue, "Arthur: This is my day of courage!\n" )
 		|| eq( charName, "Homer" ) && eq( dialogue, "Homer: My knife is pointy, ain't it?\n" )
 		|| eq( charName, "Diana" ) && eq( dialogue, "Diana: For the dark angels!\n" )
+		|| eq( charName, "Sorn" ) && eq( dialogue, "Sorn: Do you doubt my power now?\n" )
+		|| eq( charName, "Vesta" ) && eq( dialogue, "Vesta: Fear my wrath for it is directed at you!\n" )
 		;
 }
 
@@ -157,17 +168,22 @@ castor::relation characterAtkdDialogue( castor::lref<std::string> charName, cast
 	return eq( charName, "Lance" ) && eq( dialogue, "Lance: I know no defeat!\n" )
 		|| eq( charName, "Arthur" ) && eq( dialogue, "Arthur: You think this is the last of me!?\n" )
 		|| eq( charName, "Homer" ) && eq( dialogue, "Homer: Ouch! No pity? \n" )
-		|| eq( charName, "Diana" ) && eq( dialogue, "Diana: Don't dare do that again\n" )
+		|| eq( charName, "Diana" ) && eq( dialogue, "Diana: Don't dare do that again.\n" )
+		|| eq( charName, "Sorn" ) && eq( dialogue, "Sorn: I did not see that coming.\n" )
+		|| eq( charName, "Vesta" ) && eq( dialogue, "Vesta: I may have underestimated your strength.\n" )
+
 		;
 }
 
 castor::relation characterDeathDialogue( castor::lref<std::string> charName, castor::lref<std::string> dialogue )
 {
 	using namespace castor;
-	return eq( charName, "Lance" ) && eq( dialogue, "Lance: See you in the afterlife\n" )
+	return eq( charName, "Lance" ) && eq( dialogue, "Lance: See you in the afterlife.\n" )
 		|| eq( charName, "Arthur" ) && eq( dialogue, "Arthur: My sword will live on!\n" )
-		|| eq( charName, "Homer" ) && eq( dialogue, "Homer: Dang \n" )
-		|| eq( charName, "Diana" ) && eq( dialogue, "Diana: My comrades will avenge me\n" )
+		|| eq( charName, "Homer" ) && eq( dialogue, "Homer: Dang.\n" )
+		|| eq( charName, "Diana" ) && eq( dialogue, "Diana: My comrades will avenge me.\n" )
+		|| eq( charName, "Sorn" ) && eq( dialogue, "Sorn: You were a worthy foe.\n" )
+		|| eq( charName, "Vesta" ) && eq( dialogue, "Vesta: My powers were little match.\n" )
 		;
 }
 
@@ -217,6 +233,9 @@ castor::relation weaponIsType(
 	return eq( weapon1, "Hammer of Wrath" ) && eq( type, "rock" )
 		^ eq( weapon1, "Paper Towel" ) && eq( type, "paper" )
 		^ eq( weapon1, "Blade of Doom" ) && eq( type, "scissors" )
+		^ eq( weapon1, "Ageon Stone" ) && eq( type, "rock" )
+		^ eq( weapon1, "Spear of Life" ) && eq( type, "scissors" )
+		^ eq( weapon1, "Amulet of Desire" ) && eq( type, "paper" )
 		^ eq( type, "scissors" )
 		;
 }
