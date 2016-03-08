@@ -185,13 +185,7 @@ bool cellIsOccupied(
 	CharInfoMap& charInfos, int checkPosX, int checkPosY
 	)
 {
-	//note: can't make this a relation since castor can't do backtracking on [] operators
-	for ( auto& unit : charInfos )
-	{
-		if ( unit.second._pos[0] == checkPosX && unit.second._pos[1] == checkPosY )
-			return true;
-	}
-	return false;
+	return (g_gameMap[checkPosX][checkPosY]._occupant._hp > 0);
 }
 
 castor::relation playerCanMoveTo( 

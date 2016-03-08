@@ -119,15 +119,12 @@ namespace Phases
 							cout << dialogue2.get();
 					}
 
-					/*check if enemy dead
+
 					if ( curEnemy._hp <= 0 )
 					{
-					//update player's position to enemy's
-					curChar._pos = { curEnemy._pos[0], curEnemy._pos[1] };
-					cout << string_format( "\n%s(team:%s) has died!\n",
-					enemyName.get().c_str(), oppTeamName.get().c_str() ) << endl;
-					}*/
-					//each player can only attack 1 enemy
+					//if enemy is dead, remove it from the map
+					g_gameMap[curEnemy._pos[0]][curEnemy._pos[1]]._occupant = CharInfo();
+					}
 					return true;
 				}
 			}
@@ -174,7 +171,7 @@ namespace Phases
 										attackFinished = true;
 
 								//[MOVE 1. Move to an adjacent position on the map if there is not already an enemy in attack range (adjacent).
-								if ( true )
+								if ( !attackFinished )
 									move_moveOnMap( charInfos, curChar );
 
 								//[MOVE 2. look for an enemy that is adjacent => attack]
