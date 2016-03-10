@@ -223,7 +223,7 @@ namespace Phases
 								if ( (strategyType.get() == StrategyType::calculated) && !tileIsDangerous( charInfos, curChar, oppTeamName))
 								{
 									//If current spot is safe, look for an enemy to attack, then move if none is found. If unsafe just move.
-									if ( move_atkIfPossible( charInfos, curChar, oppTeamName.get(), "[CALCULATED ATTACK]" ));
+									if ( move_atkIfPossible( charInfos, curChar, oppTeamName.get(), "[CALCULATED ATTACK]" ))
 										attackFinished = true;	
 								}
 								else if ( strategyType.get() == StrategyType::aggressive ) 

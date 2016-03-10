@@ -90,7 +90,7 @@ castor::relation onTeam(
 		|| eq( charName, "Karina" ) && eq( teamName, "A" ) && eq( hp, 4 ) && eq( attack, 11 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq(posY, 6)
 		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 16 ) && eq( attack, 10 ) && eq( movement, 1 ) && eq( posX, 8 ) && eq(posY, 4)
 		|| eq( charName, "Sorn" ) && eq( teamName, "B" ) && eq( hp, 7 ) && eq( attack, 4 ) && eq( movement, 1 ) && eq( posX, 6 ) && eq(posY, 4)
-		|| eq( charName, "Vesta" ) && eq( teamName, "B" ) && eq( hp, 10 ) && eq( attack, 2 ) && eq( movement, 1 ) && eq( posX, 5 ) && eq(posY, 6)
+		|| eq( charName, "Vesta" ) && eq( teamName, "B" ) && eq( hp, 10 ) && eq( attack, 14 ) && eq( movement, 1 ) && eq( posX, 5 ) && eq(posY, 6)
 		|| eq( charName, "Babak" ) && eq( teamName, "B" ) && eq( hp, 3 ) && eq( attack, 7 ) && eq( movement, 1 ) && eq( posX, 4 ) && eq(posY, 2)
 		|| eq( charName, "Cadoc" ) && eq( teamName, "B" ) && eq( hp, 8 ) && eq( attack, 6 ) && eq( movement, 1 ) && eq( posX, 4 ) && eq(posY, 1)
 		|| eq( charName, "Nadia" ) && eq( teamName, "B" ) && eq( hp, 11 ) && eq( attack, 7 ) && eq( movement, 1 ) && eq( posX, 2 ) && eq(posY, 1)
