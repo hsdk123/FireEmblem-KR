@@ -269,18 +269,21 @@ castor::relation weaponIsType(
 	castor::lref<std::string> weapon1, castor::lref<std::string> type
 	)
 {
-	return eq( weapon1, "Hammer of Wrath" ) && eq( type, "rock" )
-		^ eq( weapon1, "Paper Towel" ) && eq( type, "paper" )
-		^ eq( weapon1, "Blade of Doom" ) && eq( type, "scissors" )
-		^ eq( weapon1, "Ageon Stone" ) && eq( type, "rock" )
-		^ eq( weapon1, "Spear of Life" ) && eq( type, "scissors" )
-		^ eq( weapon1, "Amulet of Desire" ) && eq( type, "paper" )
-		^ eq( weapon1, "Boulder of Misery" ) && eq( type, "rock" )
-		^ eq( weapon1, "Arrow of Hope" ) && eq( type, "scissors" )
-		^ eq( weapon1, "Vengeful Enchantment" ) && eq( type, "paper" )
-		^ eq( weapon1, "Brass Knuckles" ) && eq( type, "rock" )
-		^ eq( weapon1, "Horned Dagger" ) && eq( type, "scissors" )
-		^ eq( weapon1, "Buckler Sheet" ) && eq( type, "paper" )
+	return 
+		(
+			eq( weapon1, "Hammer of Wrath" ) && eq( type, "rock" )
+			|| eq( weapon1, "Paper Towel" ) && eq( type, "paper" )
+			|| eq( weapon1, "Blade of Doom" ) && eq( type, "scissors" )
+			|| eq( weapon1, "Ageon Stone" ) && eq( type, "rock" )
+			|| eq( weapon1, "Spear of Life" ) && eq( type, "scissors" )
+			|| eq( weapon1, "Amulet of Desire" ) && eq( type, "paper" )
+			|| eq( weapon1, "Boulder of Misery" ) && eq( type, "rock" )
+			|| eq( weapon1, "Arrow of Hope" ) && eq( type, "scissors" )
+			|| eq( weapon1, "Vengeful Enchantment" ) && eq( type, "paper" )
+			|| eq( weapon1, "Brass Knuckles" ) && eq( type, "rock" )
+			|| eq( weapon1, "Horned Dagger" ) && eq( type, "scissors" )
+			|| eq( weapon1, "Buckler Sheet" ) && eq( type, "paper" )
+		)
 		^ eq( type, "scissors" )
 		;
 }
@@ -306,15 +309,19 @@ castor::relation weaponIsStrongerThanWeapon(
 }
 
 const float g_atk_effective = 1.5;
+const float g_atk_normal = 1.0;
 const float g_atk_uneffective = 0.5;
 
 castor::relation weaponEffectOnWeapon(
 	castor::lref<std::string> weapon1, castor::lref<std::string> weapon2, castor::lref<float> effectMultiplier
 	)
 {
+	using namespace castor;
+	lref<std::string> weapon1Type, weapon2Type;
 	return weaponIsStrongerThanWeapon( weapon1, weapon2 ) && eq( effectMultiplier, g_atk_effective )
-		//Note: basically saying if weapons of same time, also 0.5
-		|| eq( effectMultiplier, g_atk_uneffective )
+		|| weaponIsType( weapon1, weapon1Type ) && weaponIsType( weapon2, weapon2Type ) && eq( weapon1Type, weapon2Type ) && eq( effectMultiplier, g_atk_normal )
+		|| weaponIsStrongerThanWeapon( weapon2, weapon1 ) && eq( effectMultiplier, g_atk_uneffective )
+		/*^ eq( effectMultiplier, g_atk_uneffective )*/
 		;
 }
 
@@ -322,8 +329,10 @@ castor::relation weaponEffectMsg(
 	castor::lref<float> multiplier, castor::lref<std::string> msg
 	)
 {
+	using namespace castor;
 	return eq( multiplier, g_atk_effective ) && eq( msg, "attack was effective! \n" )
-		^ eq( msg, "attack didn't do much... \n" )
+		|| eq( multiplier, g_atk_normal ) && eq( msg, "attack went in as normal \n" )
+		|| eq( multiplier, g_atk_uneffective ) && eq( msg, "attack didn't do much... \n" )
 		;
 }
 
@@ -367,7 +376,7 @@ castor::relation tileIsTerrainType(
 {
 	using namespace castor;
 	return tileIsTerrainTypeSpecial( posX, posY, type )
-		|| eq( type, TerrainType::normal ) //note: using a cut (not an or)
+		^ eq( type, TerrainType::normal ) //note: using a cut (not an or)
 		;
 }
 
