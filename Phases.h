@@ -37,6 +37,33 @@ namespace Phases
 			}
 		}
 	}
+	
+	int tileIsDangerous (CharInfoMap& charInfos, CharInfo& curChar, castor::lref<std::string> oppTeamName)
+	{
+		using namespace std;
+		using namespace castor;
+		lref<string> enemyName;
+		relation enemyInfo = onTeam( enemyName, oppTeamName, { }, { }, { } );
+		int danger = 0;
+		while ( enemyInfo() )
+		{
+			auto& curEnemy = charInfos[enemyName.get()];
+			relation canAttack = playerCanAttack( curChar._pos[0], curChar._pos[1], curEnemy._pos[0], curEnemy._pos[1] );
+			if ( canAttack() )
+			{
+				danger += curEnemy._attack;
+			}
+		}
+		if (danger >= curChar._hp)
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	
 
 	void move_moveOnMap( CharInfoMap& charInfos, CharInfo& curChar )
 	{
@@ -192,19 +219,26 @@ namespace Phases
 							//relation canAttackImmediately = existAdjacentEnemies(curChar._pos[0], curChar._pos[1], oppTeamName);
 							//if ( !canAttackImmediately())
 							{
-								//[MOVE 0. Attack any enemy in sight]
 								bool attackFinished = false;
-								if ( strategyType.get() == StrategyType::aggressive )
+								if ( (strategyType.get() == StrategyType::calculated) && !tileIsDangerous( charInfos, curChar, oppTeamName))
+								{
+									//If current spot is safe, look for an enemy to attack, then move if none is found. If unsafe just move.
+									if ( move_atkIfPossible( charInfos, curChar, oppTeamName.get(), "[CALCULATED ATTACK]" ));
+										attackFinished = true;	
+								}
+								else if ( strategyType.get() == StrategyType::aggressive ) 
+								{
 									if ( move_atkIfPossible( charInfos, curChar, oppTeamName.get(), "[AGGRESSIVE ATTACK]" ) )
 										attackFinished = true;
-
+								}
 								//[MOVE 1. Move to an adjacent position on the map if there is not already an enemy in attack range (adjacent).
 								if ( !attackFinished )
 									move_moveOnMap( charInfos, curChar );
-
+								
 								//[MOVE 2. look for an enemy that is adjacent => attack]
 								if ( !attackFinished && strategyType.get() != StrategyType::run )
 									move_atkIfPossible( charInfos, curChar, oppTeamName.get() );
+								
 
 								evalGameState( charInfos );
 								if ( g_GameState != 0 )

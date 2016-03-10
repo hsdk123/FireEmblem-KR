@@ -3,8 +3,8 @@
 #include <map>
 #include <ctime>
 
-const int g_mapWidth = 3;
-const int g_mapHeight = 3;
+const int g_mapWidth = 10;
+const int g_mapHeight = 10;
 
 castor::relation gender( castor::lref < std::string > p, castor::lref<std::string> g )
 {
@@ -66,7 +66,8 @@ enum class StrategyType
 {
 	standard, //move + attack if enemy in range
 	run, //just keep running without attacking
-	aggressive //if attackable enemy exists, attacks right away
+	aggressive, //if attackable enemy exists, attacks right away
+	calculated //makes an intelligent decision as to which of the above three actions to take.
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +75,7 @@ enum class StrategyType
 //board representation: AxB (0,0 at bottom left)
 
 //stats: HP, Attack, and Movement
--castor::relation onTeam(
+castor::relation onTeam(
 	castor::lref<std::string> charName, castor::lref<std::string> teamName,
 	castor::lref<float> hp, castor::lref<int> attack, castor::lref<int> movement,
 	castor::lref<int> posX = { }, castor::lref<int> posY = { }
@@ -89,12 +90,13 @@ enum class StrategyType
 		|| eq( charName, "Karina" ) && eq( teamName, "A" ) && eq( hp, 4 ) && eq( attack, 11 ) && eq( movement, 1 ) && eq( posX, 1 ) && eq(posY, 6)
 		|| eq( charName, "Diana" ) && eq( teamName, "B" ) && eq( hp, 16 ) && eq( attack, 10 ) && eq( movement, 1 ) && eq( posX, 8 ) && eq(posY, 4)
 		|| eq( charName, "Sorn" ) && eq( teamName, "B" ) && eq( hp, 7 ) && eq( attack, 4 ) && eq( movement, 1 ) && eq( posX, 6 ) && eq(posY, 4)
-		|| eq( charName, "Vesta" ) && eq( teamName, "B" ) && eq( hp, 10 ) && eq( attack, 2 ) && eq( movement, 1 ) && eq( posX, 5 ) && eq(posY, 3)
+		|| eq( charName, "Vesta" ) && eq( teamName, "B" ) && eq( hp, 10 ) && eq( attack, 2 ) && eq( movement, 1 ) && eq( posX, 5 ) && eq(posY, 6)
 		|| eq( charName, "Babak" ) && eq( teamName, "B" ) && eq( hp, 3 ) && eq( attack, 7 ) && eq( movement, 1 ) && eq( posX, 4 ) && eq(posY, 2)
 		|| eq( charName, "Cadoc" ) && eq( teamName, "B" ) && eq( hp, 8 ) && eq( attack, 6 ) && eq( movement, 1 ) && eq( posX, 4 ) && eq(posY, 1)
 		|| eq( charName, "Nadia" ) && eq( teamName, "B" ) && eq( hp, 11 ) && eq( attack, 7 ) && eq( movement, 1 ) && eq( posX, 2 ) && eq(posY, 1)
 		;
 }
+
 castor::relation teamNames( castor::lref<std::string> myTeam, castor::lref<std::string> enemyTeam )
 {
 	using namespace castor;
@@ -153,11 +155,11 @@ castor::relation characterHeldWeapon( castor::lref<std::string> charName, castor
 castor::relation characterStrategyType( castor::lref<std::string> charName, castor::lref<StrategyType> strategyType )
 {
 	using namespace castor;
-	return eq( charName, "Lance" ) && eq( strategyType, StrategyType::run )
-		|| eq( charName, "Arthur" ) && eq( strategyType, StrategyType::standard )
+	return eq( charName, "Lance" ) && eq( strategyType, StrategyType::calculated )
+		|| eq( charName, "Arthur" ) && eq( strategyType, StrategyType::aggressive )
 		|| eq( charName, "Homer" ) && eq( strategyType, StrategyType::standard )
 		|| eq( charName, "Diana" ) && eq( strategyType, StrategyType::aggressive )
-		|| eq( charName, "Sorn" ) && eq( strategyType, StrategyType::standard )
+		|| eq( charName, "Sorn" ) && eq( strategyType, StrategyType::calculated )
 		|| eq( charName, "Vesta" ) && eq( strategyType, StrategyType::run )
 		|| eq( charName, "Tadeas" ) && eq( strategyType, StrategyType::standard )
 		|| eq( charName, "Octavia" ) && eq( strategyType, StrategyType::standard )
@@ -247,6 +249,8 @@ castor::relation adjacentCoords(
 		|| eq( curPosX, adjPosX ) && eq( curPosY.get()-1, adjPosY ) //down
 		;
 }
+
+
 //////////////////////////////////////////////////////////////////////////////////////////
 //[WEAPON INTERACTION]
 
