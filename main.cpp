@@ -72,7 +72,8 @@ int main()
 			}
 
 			relation charInBounds = coordsWithinMap( posX, posY );
-			if ( charInBounds() )
+			relation charOnMoveableTile = onMoveableCoord( posX, posY );
+			if ( charInBounds() && charOnMoveableTile() )
 			{
 				CharInfo charInfo;
 				charInfo._name = charName.get();

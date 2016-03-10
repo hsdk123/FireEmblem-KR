@@ -396,6 +396,18 @@ bool cellIsOccupied(
 	return ( g_gameMap[checkPosX][checkPosY]._occupant._hp > 0 );
 }
 
+castor::relation onMoveableCoord(
+	castor::lref<int> curPosX, castor::lref<int> curPosY
+	)
+{
+	using namespace castor;
+	lref<TerrainType> terrainType;
+	return coordsWithinMap( curPosX, curPosY )
+		&& tileIsTerrainType( curPosX, curPosY, terrainType )
+		&& eq( terrainType, TerrainType::normal )
+		;
+}
+
 castor::relation playerCanMoveTo(
 	CharInfoMap& charInfos,
 	castor::lref<int> curPosX, castor::lref<int> curPosY,
