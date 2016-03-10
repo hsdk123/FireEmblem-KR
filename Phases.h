@@ -47,11 +47,14 @@ namespace Phases
 		int danger = 0;
 		while ( enemyInfo() )
 		{
-			auto& curEnemy = charInfos[enemyName.get()];
-			relation canAttack = playerCanAttack( curChar._pos[0], curChar._pos[1], curEnemy._pos[0], curEnemy._pos[1] );
-			if ( canAttack() )
+			if ( charInfos.find( enemyName.get() ) != charInfos.end() )
 			{
-				danger += curEnemy._attack;
+				auto& curEnemy = charInfos[enemyName.get()];
+				relation canAttack = playerCanAttack( curChar._pos[0], curChar._pos[1], curEnemy._pos[0], curEnemy._pos[1] );
+				if ( canAttack() )
+				{
+					danger += curEnemy._attack;
+				}
 			}
 		}
 		if (danger >= curChar._hp)

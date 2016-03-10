@@ -10,6 +10,7 @@ HOW TO RUN THE PROGRAM
 
 1. Run main.exe and type "standard" when prompted.
 2. If main.exe does not run, recompile the program using C++11 and GCC 4.8 or greater.
+3. For details on "custom" setups, please refer to the project pdf or follow the steps in the prompt. 
 
 FILE DESCRIPTIONS:
 
@@ -27,3 +28,4 @@ HOW TO EDIT UNIT ATTRIBUTES:
 1. For most attributes, in the file KB.h, find the relation called onTeam(), and edit the information found in there to modify,
 add, or delete unit attributes.
 2. For strategy type, find the relation characterStrategyType, and for weapon type, find weaponIsType.
+3. All other attributes (dialogue, weapons, terrain, etc.) are also freely editable: disjunctions may be used to add new info.
