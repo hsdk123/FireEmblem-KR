@@ -130,7 +130,7 @@ namespace Phases
 				{
 					//calculate damage
 					float attack = static_cast<float>( curChar._attack );
-					float attackMultiplier;
+					float attackMultiplier = 1.0f;
 					{
 						lref<float> multiplier;
 						lref<string> atkWeapon, defWeapon;
